@@ -1,0 +1,92 @@
+create database proyecto;
+use proyecto;
+
+drop database proyecto;
+CREATE TABLE DatosSensor (
+    ID INT PRIMARY KEY IDENTITY,
+    Temperatura FLOAT,
+    Distance1 FLOAT,
+    Distance2 FLOAT,
+    TDSValue FLOAT,
+    PHValue FLOAT,
+    FechaHora DATETIME
+);
+
+/*REGISTROS*/
+
+-- Insertar un registro en la tabla DatosSensor
+INSERT INTO DatosSensor (Temperatura, Distance1, Distance2, TDSValue, PHValue, FechaHora)
+VALUES (25.5, 10.3, 15.7, 450.8, 7.2, GETDATE());
+
+-- Insertar otro registro en la tabla DatosSensor
+INSERT INTO DatosSensor (Temperatura, Distance1, Distance2, TDSValue, PHValue, FechaHora)
+VALUES (26.8, 11.2, 14.5, 420.6, 7.0, GETDATE());
+
+
+select * from DatosSensor;
+-- Insertar más registros según sea necesario
+
+
+/*PROCEDIMIENTOS ALMACENADOS*/
+
+
+/*LISTAR*/
+create proc sp_lista_DatosSensor  
+as
+begin
+select
+ID,Temperatura,Distance1,Distance2,TDSValue,
+PHValue,FechaHora from DatosSensor
+end
+
+
+/*GUARDAR*/
+CREATE PROCEDURE sp_guardar_DatosSensor  
+(
+    @Temperatura FLOAT,
+    @Distance1 FLOAT, 
+    @Distance2 FLOAT,  
+    @TDSValue FLOAT,
+    @PHValue FLOAT, 
+    @FechaHora DATETIME
+)
+AS
+BEGIN
+    INSERT INTO DatosSensor(Temperatura, Distance1, Distance2, TDSValue, PHValue, FechaHora)
+    VALUES(@Temperatura, @Distance1, @Distance2, @TDSValue, @PHValue, @FechaHora)
+END
+
+
+/*MODIFICAR*/
+
+create proc sp_editar_DatosSensor( 
+@ID int,
+@Temperatura float null,
+@Distance1 float null, 
+@Distance2 float null,  
+@TDSValue float null,
+@PHValue float null, 
+@FechaHora datetime null
+)as
+begin
+
+update DatosSensor set
+Temperatura =isnull(@Temperatura,Temperatura),  
+Distance1 = isnull(@Distance1,Distance1),
+Distance2 = isnull(@Distance2,Distance2),
+TDSValue = isnull(@TDSValue,TDSValue),
+PHValue = isnull(@PHValue,PHValue),
+FechaHora = isnull(@FechaHora, FechaHora)
+where ID = @ID
+
+end
+
+/*ELIMINAR*/
+
+create proc sp_eliminar_DatosSensor(
+@ID int
+)
+as  
+begin
+delete from DatosSensor where ID = @ID  end
+
